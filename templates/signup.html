@@ -1,18 +1,32 @@
 {% extends 'base.html' %}
 {% block content %}
-<div style="max-width: 400px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-  <h2 style="text-align:center;">Sign Up</h2>
-  <form method="POST" action="/signup">
-    <div style="margin-bottom: 1rem;">
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" required style="width:100%;padding:0.5rem;">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow border-0 rounded-3 mt-5">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h3 class="mb-0">Sign Up</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="/signup">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                            <label for="username">Username</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                            <label for="password">Password</label>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary btn-lg" type="submit">Sign Up</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <p class="text-muted mb-0">Already have an account? <a href="/" class="text-primary">Sign In</a></p>
+                </div>
+            </div>
+        </div>
     </div>
-    <div style="margin-bottom: 1rem;">
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" required style="width:100%;padding:0.5rem;">
-    </div>
-    <button type="submit" style="width:100%;padding:0.7rem;background:#007bff;color:#fff;border:none;border-radius:4px;">Sign Up</button>
-  </form>
-  <p style="text-align:center;margin-top:1rem;">Already have an account? <a href="/">Sign In</a></p>
 </div>
 {% endblock %}

@@ -1,11 +1,18 @@
 <!-- Navbar HTML -->
-<nav style="background-color: #343a40; padding: 1rem; color: white; display: flex; justify-content: space-between; align-items: center;">
-  <div style="font-weight: bold; font-size: 1.2rem;">Vehicle Parking App</div>
-  <ul style="list-style: none; display: flex; gap: 1.5rem; margin: 0; padding: 0;">
-    <li><a href="/" style="color: white; text-decoration: none;">Home</a></li>
-    <li><a href="/dashboard" style="color: white; text-decoration: none;">Dashboard</a></li>
-    <li><a href="/lots" style="color: white; text-decoration: none;">Parking Lots</a></li>
-    <li><a href="/reserve" style="color: white; text-decoration: none;">Reserve Spot</a></li>
-    <li><a href="/logout" style="color: white; text-decoration: none;">Logout</a></li>
-  </ul>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Vehicle Parking App</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link active" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/lots">Parking Lots</a></li>
+                <li class="nav-item"><a class="nav-link" href="/reserve">Reserve Spot</a></li>
+                <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+            </ul>
+        </div>
+    </div>
 </nav>
