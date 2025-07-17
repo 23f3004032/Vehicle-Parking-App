@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for,flash
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from models import *
@@ -8,7 +8,7 @@ CORS(app)
 # Configurations (example, update as needed)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///parking.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+app.config['SECRET_KEY'] = '8905585fad09b399f467194245949859'  # Required for session management
 db.init_app(app)
 
 # Example route
@@ -45,7 +45,7 @@ def signup():
         password = request.form['password']
         new_user = User(username=username, password=password)
         db.session.add(new_user)
-        
+        db.session.commit()
         # Add user creation logic (hash password, save to DB)
         return "User registered successfully!"  # Replace with redirect or template
     return render_template('signup.html')
@@ -58,12 +58,11 @@ def signin():
         username = request.form['username']
         password = request.form['password']
         # Add authentication logic (check user, verify password)
-        return "User signed in successfully!"  # Replace with redirect or template
+        flash("User signed in successfully!")  # Replace with redirect or template
+        return redirect(url_for('home'))
     return render_template('signin.html')
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-
-
