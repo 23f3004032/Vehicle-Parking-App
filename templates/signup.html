@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 400px; margin: 2rem auto; background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  <h2 style="text-align:center;">Sign Up</h2>
+  <form method="POST" action="/signup">
+    <div style="margin-bottom: 1rem;">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" required style="width:100%;padding:0.5rem;">
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required style="width:100%;padding:0.5rem;">
+    </div>
+    <button type="submit" style="width:100%;padding:0.7rem;background:#007bff;color:#fff;border:none;border-radius:4px;">Sign Up</button>
+  </form>
+  <p style="text-align:center;margin-top:1rem;">Already have an account? <a href="/">Sign In</a></p>
+</div>
+{% endblock %}
