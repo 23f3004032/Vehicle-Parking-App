@@ -4,11 +4,25 @@ from datetime import datetime
 db=SQLAlchemy()
 
 # User model
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
-    # Add more fields as needed
+    
+    def get_id(self):
+        return str(self.id)
+    
+    @property
+    def is_authenticated(self):
+        return True
+    
+    @property
+    def is_active(self):
+        return True
+    
+    @property
+    def is_anonymous(self):
+        return False
 
 # ParkingLot model
 class ParkingLot(db.Model):

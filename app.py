@@ -45,7 +45,7 @@ def signup():
         password = request.form['password']
         new_user = User(username=username, password=password)
         db.session.add(new_user)
-        db.session.commit()
+        
         # Add user creation logic (hash password, save to DB)
         return "User registered successfully!"  # Replace with redirect or template
     return render_template('signup.html')
