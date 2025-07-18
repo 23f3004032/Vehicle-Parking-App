@@ -12,9 +12,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 # Example route
-@app.route('/dashboard')
-def dashboard():
-    return render_template('dashboard.html')
+@app.route('/dashboard/<string:username>')
+def dashboard(username):
+    return render_template('dashboard.html', username=username)  # Replace with actual user data
 
 # Dashboard route
 # @app.route('/dashboard')
@@ -65,8 +65,13 @@ def signin():
         user = User.query.filter_by(username=username, password=password).first()
         if not user:
             return render_template('signin.html',msg="Invalid credentials, please try again.",type="alert")
-        return redirect(url_for('dashboard'))  # Replace with redirect or template
+        return redirect(url_for('dashboard',username=username))  # Replace with redirect or template
     return render_template('signin.html')
+
+# Profile route
+@app.route('/profile/<string:username>')
+def profile(username):
+    return render_template('profile.html', username=username)
 
 if __name__ == '__main__':
     with app.app_context():

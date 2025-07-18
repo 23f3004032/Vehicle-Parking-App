@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <title>Dashboard - Vehicle Parking App</title>
+    <title>Profile - Vehicle Parking App</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="/">Only Cars</a>
+            <a class="navbar-brand" href="/dashboard/{{username}}">Only Cars</a>
             <div class="d-flex align-items-center">
+                <a href="/dashboard/{{username}}" class="btn btn-outline-light me-2">Dashboard</a>
                 <div class="dropdown">
                     <button class="btn btn-outline-light rounded-circle" type="button" data-bs-toggle="dropdown">
                         <i class="bi bi-person-circle fs-5"></i>
@@ -27,34 +28,14 @@
     </nav>
 
     <div class="container" style="margin-top: 100px;">
-        <h2 class="mb-4">Welcome, {{ username }}!</h2>
-        
-        <div class="row g-4">
-            <!-- Book a Spot Card -->
-            <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-body text-center">
-                        <div class="display-1 text-primary mb-3">
-                            <i class="bi bi-plus-circle"></i>
-                        </div>
-                        <h3 class="card-title">Book a Spot</h3>
-                        <p class="card-text">Reserve a new parking spot for your vehicle</p>
-                        <a href="/book-spot" class="btn btn-primary">Book Now</a>
-                    </div>
+        <div class="card border-0 shadow-lg">
+            <div class="card-body text-center p-5">
+                <div class="display-1 text-primary mb-4">
+                    <i class="bi bi-person-circle"></i>
                 </div>
-            </div>
-
-            <!-- View Bookings Card -->
-            <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-body text-center" >
-                        <div class="display-1 text-success mb-3">
-                            <i class="bi bi-card-list"></i>
-                        </div>
-                        <h3 class="card-title">My Bookings</h3>
-                        <p class="card-text">View your current and previous parking bookings</p>
-                        <a href="/bookings" class="btn btn-success">View Bookings</a>
-                    </div>
+                <p class="lead">Hi {{ username }}, I hope you are having a great time here.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                    <a href="/dashboard/{{username}}" class="btn btn-primary btn-lg">Back to Dashboard</a>
                 </div>
             </div>
         </div>
@@ -67,5 +48,7 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
 </body>
 </html>
