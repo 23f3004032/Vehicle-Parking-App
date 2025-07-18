@@ -14,7 +14,7 @@ db.init_app(app)
 # Example route
 @app.route('/dashboard')
 def dashboard():
-    return render_template('base.html')
+    return render_template('dashboard.html')
 
 # Dashboard route
 # @app.route('/dashboard')
