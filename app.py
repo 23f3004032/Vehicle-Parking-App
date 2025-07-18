@@ -34,7 +34,7 @@ def reserve():
 # Logout route
 @app.route('/logout')
 def logout():
-    return "You have been logged out."
+    return redirect(url_for('signin', msg="Logged out successfully!", type="success"))
 
 # Sign Up route
 @app.route('/signup', methods=['GET', 'POST'])
@@ -77,3 +77,4 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
