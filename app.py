@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for,flash
+from flask import Flask, render_template, request, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from models import *
@@ -8,12 +8,12 @@ CORS(app)
 # Configurations (example, update as needed)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///parking.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = '8905585fad09b399f467194245949859'  # Required for session management
+
 db.init_app(app)
 
 # Example route
 @app.route('/dashboard')
-def home():
+def dashboard():
     return render_template('base.html')
 
 # Dashboard route
@@ -43,11 +43,15 @@ def signup():
         # Handle user registration logic here
         username = request.form['username']
         password = request.form['password']
+        # Check if user already exists
+        existing_user = User.query.filter_by(username=username).first()
+        if existing_user:
+            return render_template('signup.html', msg="Username already exists, please choose another.", type="alert")
         new_user = User(username=username, password=password)
         db.session.add(new_user)
         db.session.commit()
         # Add user creation logic (hash password, save to DB)
-        return "User registered successfully!"  # Replace with redirect or template
+        return redirect(url_for("signin", msg="User registered successfully!",type= "success")) # Replace with redirect or template
     return render_template('signup.html')
 
 # Sign In route
@@ -55,11 +59,13 @@ def signup():
 def signin():
     if request.method == 'POST':
         # Handle user authentication logic here
-        username = request.form['username']
-        password = request.form['password']
+        username = request.form.get('username')
+        password = request.form.get('password')
         # Add authentication logic (check user, verify password)
-        flash("User signed in successfully!")  # Replace with redirect or template
-        return redirect(url_for('home'))
+        user = User.query.filter_by(username=username, password=password).first()
+        if not user:
+            return render_template('signin.html',msg="Invalid credentials, please try again.",type="alert")
+        return redirect(url_for('dashboard'))  # Replace with redirect or template
     return render_template('signin.html')
 
 if __name__ == '__main__':

@@ -20,6 +20,18 @@
                         <div class="d-grid">
                             <button class="btn btn-primary btn-lg" type="submit">Sign Up</button>
                         </div>
+                        {% if msg  %}
+                            {% set type = type if type else "alert" %}
+                            {% if type == "alert" %}
+                                <div class="alert alert-danger mt-3" role="alert">
+                                    {{ msg }}
+                                </div>
+                            {% elif type == "success" %}
+                                <div class="alert alert-success mt-3" role="alert">
+                                    {{ msg }}
+                                </div> 
+                            {% endif %}
+                        {% endif %}
                     </form>
                 </div>
                 <div class="card-footer text-center py-3">

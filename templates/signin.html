@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
+<h1 align="Center"> Welcome to Parking App</h1>
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6 col-lg-4">
@@ -20,6 +21,18 @@
                         <div class="d-grid">
                             <button class="btn btn-primary btn-lg" type="submit">Sign In</button>
                         </div>
+                        {% if msg  %}
+                            {% set type = type if type else "alert" %}
+                            {% if type == "alert" %}
+                                <div class="alert alert-danger mt-3" role="alert">
+                                    {{ msg }}
+                                </div>
+                            {% elif type == "success" %}
+                                <div class="alert alert-success mt-3" role="alert">
+                                    {{ msg }}
+                                </div> 
+                            {% endif %}
+                        {% endif %}
                     </form>
                 </div>
                 <div class="card-footer text-center py-3">
