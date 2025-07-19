@@ -25,42 +25,33 @@
             </div>
         </div>
     </nav>
-
     <div class="container" style="margin-top: 100px;">
-        <h2 class="mb-4">Welcome, {{ username }}!</h2>
+        <h2 class="mb-4">Parking Lots</h2>
         
-        <div class="row g-4">
-            <!-- Book a Spot Card -->
-            <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-body text-center">
-                        <div class="display-1 text-primary mb-3">
-                            <i class="bi bi-plus-circle"></i>
-                        </div>
-                        <h3 class="card-title">Book a Spot</h3>
-                        <p class="card-text">Reserve a new parking spot for your vehicle</p>
-                        <a href="/lots/{{username}}/" class="btn btn-primary">Book Now</a>
-                    </div>
-                </div>
+        <form method="post" action="/reserve/{{lot.id}}/{{username}}/">
+            <div class="input-group mb-3">
+                <label class="input-group-text" for="vehicle">Vehicle Number</label>
+                <input type="text" class="form-control" name="vehicle" placeholder="Vehicle Number">
+                <button class="btn btn-primary" type="submit">Confirm Spot</button>
             </div>
+        </form>
+    </div>    
 
-            <!-- View Bookings Card -->
-            <div class="col-md-6">
-                <div class="card h-100 border-0 shadow-lg">
-                    <div class="card-body text-center" >
-                        <div class="display-1 text-success mb-3">
-                            <i class="bi bi-card-list"></i>
-                        </div>
-                        <h3 class="card-title">My Bookings</h3>
-                        <p class="card-text">View your current and previous parking bookings</p>
-                        <a href="/bookings/{{ username }}/" class="btn btn-success">View Bookings</a>
-                    </div>
-                </div>
+    
+     {%if msg %}
+        {% set type = type if type else "alert" %}
+        {% if type == "alert" %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ msg }}
             </div>
-        </div>
-    </div>
+        {% elif type == "success" %}
+            <div class="alert alert-success mt-3" role="alert">
+                {{ msg }}
+            </div> 
+        {% endif %}
+    {% endif %}
 
-
+    
     <footer class="bg-dark text-white text-center py-3 fixed-bottom">
         <div class="container">
             <span>&copy; 2025 Vehicle Parking App. All rights reserved.</span>

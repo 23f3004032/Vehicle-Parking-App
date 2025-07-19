@@ -12,7 +12,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
 # Example route
-@app.route('/dashboard/<string:username>')
+@app.route('/dashboard/<string:username>/')
 def dashboard(username):
     return render_template('dashboard.html', username=username)  # Replace with actual user data
 
@@ -22,22 +22,70 @@ def dashboard(username):
 #     return "Admin/User Dashboard - Status of parking spots and lots."
 
 # Parking lots route
-@app.route('/lots')
-def lots():
-    return "List of all parking lots."
+@app.route('/lots/<string:username>/')
+def lots(username):
+    lots = ParkingLot.query.all()  # Fetch all parking lots from the database
+    return render_template('lots.html', username=username, lots=lots)  # Replace with actual parking lots data  
+
 
 # Reserve spot route
-@app.route('/reserve')
-def reserve():
-    return "Reserve a parking spot."
+@app.route('/reserve/<int:lot_id>/<string:username>/', methods=['GET', 'POST'])
+def reserve(lot_id, username):
+    lot = ParkingLot.query.filter_by(id=lot_id).first()
+    spots = lot.spots  # Get all spots for the parking lot
+    if request.method == 'POST':
+        # Handle reservation logic here
+        vehicle_num = request.form.get('vehicle')
+        user = User.query.filter_by(username=username).first()
+        spot = ParkingSpot.query.filter_by(lot_id=lot_id, status='A').first()  # Get the first available spot in the lot
+        if spot:
+            reservation = Reservation(spot_id=spot.id, user_id=user.id,vehicle_num=vehicle_num)
+            spot.status = 'O'  # Mark spot as occupied
+            lot.available_spots -= 1  # Decrease available spots count
+            db.session.add(reservation) 
+            db.session.commit()
+            return render_template('spots.html', lot = lot, spots=spots, username=username, msg="Spot reserved successfully!", type="success")
+        return render_template('lots.html', username=username, msg="Spot is not available.", type="alert")  
+    if not lot:
+        return render_template('lots.html', username=username, msg="Parking lot not found.", type="alert")
+    return render_template('spots.html', username=username, lot=lot, spots=spots) 
+
+
+# Booking page
+@app.route('/bookings/<string:username>/', methods=['GET', 'POST'])
+def bookings(username):
+    user = User.query.filter_by(username=username).first()
+    reservations = Reservation.query.filter_by(user_id=user.id).all()  # Fetch user's reservations
+
+    spots = ParkingSpot.query.all()  # Fetch all parking spots
+    lots = ParkingLot.query.all()  # Fetch all parking lots
+    return render_template('booking.html', username=username, lots=lots, spots=spots, reservations=reservations)  # Replace with actual bookings data
+
+@app.route('/leave/<int:id>/<string:username>/', methods=['GET', 'POST'])
+def leave_spot(id, username):
+    reservation = Reservation.query.filter_by(id=id).first()
+    if reservation:
+        spot = ParkingSpot.query.filter_by(id=reservation.spot_id).first()
+        lot = ParkingLot.query.filter_by(id=spot.lot_id).first()
+        lot.available_spots += 1  
+        spot.status = 'A'  # Mark spot as available
+        now = datetime.utcnow()
+        duration = now - reservation.parking_timestamp
+        hours = duration.total_seconds() / 3600
+        reservation.leaving_timestamp = now
+        reservation.parking_cost = round(hours * lot.price, 2)
+
+        db.session.commit()
+    return redirect(url_for('bookings', username=username, msg="Spot left successfully!", type="success"))
+
 
 # Logout route
-@app.route('/logout')
+@app.route('/logout/')
 def logout():
     return redirect(url_for('signin', msg="Logged out successfully!", type="success"))
 
 # Sign Up route
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/signup/', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         # Handle user registration logic here
@@ -54,7 +102,7 @@ def signup():
         return redirect(url_for("signin", msg="User registered successfully!",type= "success")) # Replace with redirect or template
     return render_template('signup.html')
 
-# Sign In route
+# Sign In route 
 @app.route('/', methods=['GET', 'POST'])
 def signin():
     if request.method == 'POST':
@@ -69,12 +117,14 @@ def signin():
     return render_template('signin.html')
 
 # Profile route
-@app.route('/profile/<string:username>')
+@app.route('/profile/<string:username>/')
 def profile(username):
     return render_template('profile.html', username=username)
 
+    
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
 
+    

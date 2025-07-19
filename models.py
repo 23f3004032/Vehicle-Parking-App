@@ -18,8 +18,10 @@ class ParkingLot(db.Model):
     address = db.Column(db.String(200), nullable=False)
     pin_code = db.Column(db.String(10), nullable=False)
     maximum_number_of_spots = db.Column(db.Integer, nullable=False)
+    available_spots = db.Column(db.Integer, nullable=False)
     # Relationship to ParkingSpot
     spots = db.relationship('ParkingSpot', backref='lot', lazy=True)
+
 
 # ParkingSpot model
 class ParkingSpot(db.Model):
@@ -37,6 +39,7 @@ class Reservation(db.Model):
     parking_timestamp = db.Column(db.DateTime, default=datetime.utcnow)
     leaving_timestamp = db.Column(db.DateTime, nullable=True)
     parking_cost = db.Column(db.Float, nullable=True)
+    vehicle_num = db.Column(db.String(20), nullable=False)
     # Add more fields as needed
 
 # Admin is a superuser, no registration required. You can handle admin logic separately in your app.
