@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Parking Lots</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Parking Admin</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Home</a></li>
+        <li class="nav-item"><a class="nav-link active" href="#">Manage Lots</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/status">Live Status</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/users">Users</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/charts">Analytics</a></li>
+        <li class="nav-item"><a class="nav-link text-danger" href="/">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Create Lot Form -->
+<div class="container mt-4">
+  <h2>Create New Parking Lot</h2>
+  <form action="/admin/manage-lots/create" method="POST" class="row g-3 mt-2">
+    <div class="col-md-6">
+      <label class="form-label">Location Name</label>
+      <input type="text" class="form-control" name="prime_location_name" required>
+    </div>
+    <div class="col-md-6">
+      <label class="form-label">Address</label>
+      <input type="text" class="form-control" name="address" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">PIN Code</label>
+      <input type="text" class="form-control" name="pin_code" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Price/hour ($)</label>
+      <input type="number" class="form-control" name="price" step="0.01" required>
+    </div>
+    <div class="col-md-3">
+      <label class="form-label">Max Spots</label>
+      <input type="number" class="form-control" name="maximum_number_of_spots" required>
+    </div>
+    <div class="col-md-3 d-grid">
+      <label class="form-label d-block">&nbsp;</label>
+      <button type="submit" class="btn btn-primary">Create Lot</button>
+    </div>
+  </form>
+</div>
+
+<!-- Existing Lots Table -->
+<div class="container mt-5">
+  <h3>Existing Parking Lots</h3>
+  <table class="table table-striped table-hover mt-3">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Location</th>
+        <th>Address</th>
+        <th>PIN</th>
+        <th>Price/hr</th>
+        <th>Total</th>
+        <th>Available</th>
+        <th>Edit</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lot in lots %}
+      <tr>
+        <form action="/admin/manage-lots/edit/{{ lot.id }}" method="POST">
+          <td>{{ lot.id }}</td>
+          <td><input class="form-control" name="prime_location_name" value="{{ lot.prime_location_name }}"></td>
+          <td><input class="form-control" name="address" value="{{ lot.address }}"></td>
+          <td><input class="form-control" name="pin_code" value="{{ lot.pin_code }}"></td>
+          <td><input class="form-control" name="price" value="{{ lot.price }}"></td>
+          <td><input class="form-control" name="maximum_number_of_spots" value="{{ lot.maximum_number_of_spots }}"></td>
+          <td>{{ lot.available_spots }}</td>
+          <td><button type="submit" class="btn btn-sm btn-success">Save</button></td>
+        </form>
+        <td>
+          {% if lot.available_spots == lot.maximum_number_of_spots %}
+          <form action="/admin/manage-lots/delete/{{ lot.id }}" method="POST">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+          </form>
+          {% else %}
+            <button class="btn btn-sm btn-secondary" disabled>Busy</button>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

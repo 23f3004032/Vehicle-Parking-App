@@ -1,0 +1,115 @@
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from models import db, ParkingLot, ParkingSpot, User, Reservation
+from datetime import datetime
+
+admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
+
+# Admin Dashboard Landing Page
+@admin_bp.route("/dashboard")
+def admin_dashboard():
+    return render_template("admin_dash.html")
+
+
+# Parking Lot Management Page
+@admin_bp.route("/lots")
+def manage_lots():
+    lots = ParkingLot.query.all()
+    return render_template("admin_plm.html", lots=lots)
+
+# Create a New Parking Lot
+@admin_bp.route("/create_lot", methods=["POST"])
+def create_lot():
+    name = request.form["name"]
+    address = request.form["address"]
+    pincode = request.form["pin"]
+    price = float(request.form["price"])
+    max_spots = int(request.form["max_spots"])
+
+    lot = ParkingLot(
+        prime_location_name=name,
+        address=address,
+        pin_code=pincode,
+        price=price,
+        maximum_number_of_spots=max_spots,
+        available_spots=max_spots,
+    )
+    db.session.add(lot)
+    db.session.commit()
+
+    # Auto-generate parking spots
+    for _ in range(max_spots):
+        spot = ParkingSpot(lot_id=lot.id, status="A")
+        db.session.add(spot)
+    db.session.commit()
+
+    return redirect(url_for("admin.manage_lots"))
+
+# Edit Parking Lot
+@admin_bp.route("/edit_lot/<int:lot_id>", methods=["POST"])
+def edit_lot(lot_id):
+    lot = ParkingLot.query.get_or_404(lot_id)
+    old_max = lot.maximum_number_of_spots
+
+    lot.prime_location_name = request.form["name"]
+    lot.address = request.form["address"]
+    lot.pin_code = request.form["pin"]
+    lot.price = float(request.form["price"])
+    lot.maximum_number_of_spots = int(request.form["max_spots"])
+    db.session.commit()
+
+    # Auto-generate new spots if increasing
+    new_max = lot.maximum_number_of_spots
+    if new_max > old_max:
+        for _ in range(new_max - old_max):
+            spot = ParkingSpot(lot_id=lot.id, status="A")
+            db.session.add(spot)
+        lot.available_spots += (new_max - old_max)
+        db.session.commit()
+
+    return redirect(url_for("admin.manage_lots"))
+
+# Delete Parking Lot
+@admin_bp.route("/delete_lot/<int:lot_id>", methods=["POST"])
+def delete_lot(lot_id):
+    lot = ParkingLot.query.get_or_404(lot_id)
+    occupied = ParkingSpot.query.filter_by(lot_id=lot_id, status="O").count()
+
+    if occupied > 0:
+        flash("Cannot delete lot. Some spots are still occupied.", "danger")
+        return redirect(url_for("admin.manage_lots"))
+
+    # Delete related spots first
+    ParkingSpot.query.filter_by(lot_id=lot_id).delete()
+    db.session.delete(lot)
+    db.session.commit()
+    flash("Lot deleted successfully.", "success")
+    return redirect(url_for("admin.manage_lots"))
+
+# Live Status Overview
+@admin_bp.route("/status")
+def lot_status():
+    lots = ParkingLot.query.all()
+    return render_template("admin_status.html", lots=lots)
+
+# User Management Page
+@admin_bp.route("/users")
+def manage_users():
+    users = User.query.all()
+    user_data = []
+
+    for user in users:
+        reservations = Reservation.query.filter_by(user_id=user.id).all()
+        total = len(reservations)
+        user_data.append({
+            "id": user.id,
+            "username": user.username,
+            "reservations": total
+        })
+
+    return render_template("admin_usermanage.html", users=user_data)
+
+
+
+
+
+

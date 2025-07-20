@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from models import *
+from admin import admin_bp
+
+
 app = Flask(__name__)
 CORS(app)
 
@@ -121,7 +124,10 @@ def signin():
 def profile(username):
     return render_template('profile.html', username=username)
 
-    
+
+# Register the admin blueprint
+app.register_blueprint(admin_bp)
+   
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

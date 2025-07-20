@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Status Overview</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Parking Admin</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Home</a></li>
+        <li ><a href="{{ url_for('admin.manage_lots') }}" class="nav-link">Manage Lots</a></li>
+        <li class="nav-item"><a class="nav-link active" href="#">Live Status</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/users">Users</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/charts">Analytics</a></li>
+        <li class="nav-item"><a class="nav-link text-danger" href="/">Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Lot Status Overview -->
+<div class="container mt-4">
+  <h2>Live Lot Overview</h2>
+  <table class="table table-bordered table-striped mt-3">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Location</th>
+        <th>Total Spots</th>
+        <th>Available</th>
+        <th>View Spots</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for lot in lots %}
+      <tr>
+        <td>{{ lot.id }}</td>
+        <td>{{ lot.prime_location_name }}</td>
+        <td>{{ lot.maximum_number_of_spots }}</td>
+        <td>{{ lot.available_spots }}</td>
+        <td><a href="/admin/status/{{ lot.id }}" class="btn btn-sm btn-primary">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Spot-Level Details (when a lot is selected) -->
+{% if selected_lot %}
+<div class="container mt-5">
+  <h3>Spot Details: {{ selected_lot.prime_location_name }}</h3>
+
+  <!-- Filters -->
+  <form class="row g-3 mt-3 mb-2" method="GET" action="/admin/status/{{ selected_lot.id }}">
+    <div class="col-md-4">
+      <input type="text" name="search_id" class="form-control" placeholder="Search Spot ID" value="{{ request.args.get('search_id', '') }}">
+    </div>
+    <div class="col-md-4">
+      <select name="status_filter" class="form-select">
+        <option value="">All</option>
+        <option value="A" {% if request.args.get('status_filter') == 'A' %}selected{% endif %}>Available</option>
+        <option value="O" {% if request.args.get('status_filter') == 'O' %}selected{% endif %}>Occupied</option>
+      </select>
+    </div>
+    <div class="col-md-4 d-grid">
+      <button type="submit" class="btn btn-secondary">Filter</button>
+    </div>
+  </form>
+
+  <!-- Spot Table -->
+  <table class="table table-hover mt-2">
+    <thead class="table-light">
+      <tr>
+        <th>Spot ID</th>
+        <th>Status</th>
+        <th>User</th>
+        <th>Check-in Time</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for spot in filtered_spots %}
+      <tr>
+        <td>{{ spot.id }}</td>
+        <td>
+          {% if spot.status == 'A' %}
+            <span class="badge bg-success">Available</span>
+          {% else %}
+            <span class="badge bg-danger">Occupied</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if spot.status == 'O' and spot.reservations %}
+            {% set res = spot.reservations[-1] %}
+            User {{ res.user_id }} ({{ res.vehicle_num }})
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>
+          {% if spot.status == 'O' and spot.reservations %}
+            {{ res.parking_timestamp.strftime('%Y-%m-%d %H:%M') }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+</body>
+</html>
