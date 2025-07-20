@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models import db, ParkingLot, ParkingSpot, User, Reservation
 from datetime import datetime
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 
@@ -154,20 +156,23 @@ def make_reservations_chart():
     lots = ParkingLot.query.all()
     reservations = Reservation.query.all()
     spots = ParkingSpot.query.all()
-    names = []
-    counts = []
-    # Count reservations per lot
-    for lot in lots:
-        for spot in spots:
-            for reservation in reservations:
-                if reservation.spot_id == spot.id and spot.lot_id == lot.id:
-                    if lot.prime_location_name not in names:
-                        names.append(lot.prime_location_name)
-                        counts.append(1)
-                    else:
-                        index = names.index(lot.prime_location_name)
-                        counts[index] += 1
-                    
+  
+    # Step 1: Map spot_id → lot_id
+    spot_to_lot = {spot.id: spot.lot_id for spot in spots}
+
+    # Step 2: Initialize count for each lot
+    lot_id_to_name = {lot.id: lot.prime_location_name for lot in lots}
+    lot_counts = {lot.id: 0 for lot in lots}
+
+    # Step 3: Count reservations per lot using spot_id → lot_id
+    for res in reservations:
+        lot_id = spot_to_lot.get(res.spot_id)
+        if lot_id in lot_counts:
+            lot_counts[lot_id] += 1
+
+    # Step 4: Plot
+    names = [lot_id_to_name[lot_id] for lot_id in lot_counts]
+    counts = [lot_counts[lot_id] for lot_id in lot_counts]
 
     plt.figure(figsize=(6, 4))
     plt.bar(names, counts, color="royalblue")
@@ -195,21 +200,26 @@ def make_revenue_chart():
     lots = ParkingLot.query.all()
     reservations = Reservation.query.all()
     spots = ParkingSpot.query.all()
-    names = []
-    revenues = []
-    # names = [lot.prime_location_name for lot in lots]
-    # revenues = [len(lot.reservations) * lot.price for lot in lots]
 
-    for lot in lots:
-        for spot in spots:
-            for reservation in reservations:
-                if reservation.spot_id == spot.id and spot.lot_id == lot.id:
-                    if lot.prime_location_name not in names:
-                        names.append(lot.prime_location_name)
-                        revenues.append(lot.price)
-                    else:
-                        index = names.index(lot.prime_location_name)
-                        revenues[index] += lot.price
+    # Step 1: Map spot_id → lot_id
+    spot_to_lot = {spot.id: spot.lot_id for spot in spots}
+
+    # Step 2: Map lot_id → price and lot name
+    lot_id_to_price = {lot.id: lot.price for lot in lots}
+    lot_id_to_name = {lot.id: lot.prime_location_name for lot in lots}
+
+    # Step 3: Initialize revenue for each lot
+    lot_revenue = {lot.id: 0 for lot in lots}
+
+    # Step 4: Count revenue per lot using reservations
+    for res in reservations:
+        lot_id = spot_to_lot.get(res.spot_id)
+        if lot_id in lot_revenue:
+            lot_revenue[lot_id] += lot_id_to_price[lot_id]
+
+    # Step 5: Prepare names and revenues
+    names = [lot_id_to_name[lot_id] for lot_id in lot_revenue]
+    revenues = [lot_revenue[lot_id] for lot_id in lot_revenue]
 
     plt.figure(figsize=(6, 4))
     plt.barh(names, revenues, color="orange")

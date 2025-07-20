@@ -2,7 +2,10 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from models import *
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import os
 from admin import admin_bp
 
 
@@ -142,6 +145,8 @@ if __name__ == '__main__':
             db.session.add(admin_cred)
             db.session.add(anki)
             db.session.commit()
-    app.run(debug=True)
+    app.run(debug=True, port=1904)  # Run the Flask app
 
-    
+#----------------------------------------------------------------------------#
+# Stats For User
+#----------------------------------------------------------------------------#
