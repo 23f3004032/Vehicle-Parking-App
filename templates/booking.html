@@ -44,6 +44,7 @@
                         Price: {{ lot.price }}/hour<br>
                         <p class="card-text">Vehicle Number: {{ reservation.vehicle_num }}</p>
                         <p class="card-text">Parking Time: {{ reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                        <p class="card-text">Spot Id:{{ reservation.spot_id }}</p>
                         <a href="/leave/{{ reservation.id }}/{{ username }}/" class="btn btn-danger">Leave Spot</a>  
                     </div>
                 </div>

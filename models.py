@@ -40,6 +40,8 @@ class Reservation(db.Model):
     leaving_timestamp = db.Column(db.DateTime, nullable=True)
     parking_cost = db.Column(db.Float, nullable=True)
     vehicle_num = db.Column(db.String(20), nullable=False)
+    user = db.relationship('User', backref='reservations')
+
     # Add more fields as needed
 
 # Admin is a superuser, no registration required. You can handle admin logic separately in your app.

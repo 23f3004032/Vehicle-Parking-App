@@ -79,7 +79,8 @@
       <tr>
         <th>Spot ID</th>
         <th>Status</th>
-        <th>User</th>
+        <th>Username</th>
+        <th>Vehicle Number</th>
         <th>Check-in Time</th>
       </tr>
     </thead>
@@ -94,14 +95,15 @@
             <span class="badge bg-danger">Occupied</span>
           {% endif %}
         </td>
-        <td>
-          {% if spot.status == 'O' and spot.reservations %}
-            {% set res = spot.reservations[-1] %}
-            User {{ res.user_id }} ({{ res.vehicle_num }})
-          {% else %}
-            -
-          {% endif %}
-        </td>
+        {% if spot.status == 'O' and spot.reservations %}
+          {% set res = spot.reservations[-1] %}
+          <td>{{ res.user.username }}</td>
+          <td>{{ res.vehicle_num }}</td>
+        {% else %}
+          <td>-</td>
+          <td>-</td>
+        {% endif %}
+
         <td>
           {% if spot.status == 'O' and spot.reservations %}
             {{ res.parking_timestamp.strftime('%Y-%m-%d %H:%M') }}

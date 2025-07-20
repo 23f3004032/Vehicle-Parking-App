@@ -41,11 +41,11 @@
      {%if msg %}
         {% set type = type if type else "alert" %}
         {% if type == "alert" %}
-            <div class="alert alert-danger mt-3" role="alert">
+            <div class="alert alert-danger mt-3" style="margin-left: 3cm; margin-right: 3cm;" role="alert">
                 {{ msg }}
             </div>
         {% elif type == "success" %}
-            <div class="alert alert-success mt-3" role="alert">
+            <div class="alert alert-success mt-3" style="margin-left: 3cm; margin-right: 3cm;" role="alert">
                 {{ msg }}
             </div> 
         {% endif %}

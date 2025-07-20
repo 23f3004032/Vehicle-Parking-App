@@ -90,6 +90,31 @@ def lot_status():
     lots = ParkingLot.query.all()
     return render_template("admin_status.html", lots=lots)
 
+# Live Status with Spot-Level Details
+@admin_bp.route("/status/<int:lot_id>")
+def view_spots(lot_id):
+    lots = ParkingLot.query.all()
+    selected_lot = ParkingLot.query.get_or_404(lot_id)
+
+    # Filtering logic
+    search_id = request.args.get("search_id", "")
+    status_filter = request.args.get("status_filter", "")
+
+    # Filter spots
+    filtered_spots = selected_lot.spots
+    if search_id:
+        filtered_spots = [s for s in filtered_spots if str(s.id) == search_id]
+    if status_filter:
+        filtered_spots = [s for s in filtered_spots if s.status == status_filter]
+
+    return render_template(
+        "admin_status.html",
+        lots=lots,
+        selected_lot=selected_lot,
+        filtered_spots=filtered_spots,
+    )
+
+
 # User Management Page
 @admin_bp.route("/users")
 def manage_users():
