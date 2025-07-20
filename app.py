@@ -119,7 +119,7 @@ def signin():
             return render_template("admin_dash.html") # Redirect to admin dashboard if admin credentials are used
         # Add authentication logic (check user, verify password)
         user = User.query.filter_by(username=username, password=password).first()
-        if not user:
+        if not user: 
             return render_template('signin.html',msg="Invalid credentials, please try again.",type="alert")
         return redirect(url_for('dashboard',username=username))  # Replace with redirect or template
     return render_template('signin.html')
@@ -129,6 +129,33 @@ def signin():
 def profile(username):
     return render_template('profile.html', username=username)
 
+#----------------------------------------------------------------------------#
+# Stats For User
+#----------------------------------------------------------------------------#
+@app.route("/user/<string:username>/chart/")
+def user_chart(username):
+    make_user_time_chart(username)
+    return render_template("userchart.html", username=username)
+# Total Time Parked (Per Booking)
+def make_user_time_chart(username):
+    user = User.query.filter_by(username=username).first()
+    reservations = Reservation.query.filter_by(user_id=user.id).all()
+    labels = []
+    durations = []
+    for i, res in enumerate(reservations):
+        if res.parking_timestamp and res.leaving_timestamp:
+            hours = (res.leaving_timestamp - res.parking_timestamp).total_seconds() / 3600
+            labels.append(f"Booking {i+1}")
+            durations.append(round(hours, 2))
+    plt.figure(figsize=(8, 4))
+    plt.plot(labels, durations, marker='o', linestyle='-', color='darkgreen')
+    plt.title("Total Time Parked (per Booking)")
+    plt.xlabel("Booking")
+    plt.ylabel("Hours")
+    plt.xticks(rotation=30)
+    plt.tight_layout()
+    plt.savefig("static/total_time_parked.png")
+    plt.close()
 
 # Register the admin blueprint
 app.register_blueprint(admin_bp)
@@ -141,12 +168,7 @@ if __name__ == '__main__':
             user = User(username="admin", password="admin")
             # print("hello")    # Example user, replace with actual user creation logic
             admin_cred = User(username="admin", password="admin")
-            anki = User(username="Ankit", password="1904")
             db.session.add(admin_cred)
-            db.session.add(anki)
             db.session.commit()
     app.run(debug=True, port=1904)  # Run the Flask app
 
-#----------------------------------------------------------------------------#
-# Stats For User
-#----------------------------------------------------------------------------#
