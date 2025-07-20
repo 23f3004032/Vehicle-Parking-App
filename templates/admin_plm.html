@@ -24,10 +24,11 @@
   </div>
 </nav>
 
-<!-- Create Lot Form -->
+
+<!-- Create Parking Lot Form -->
 <div class="container mt-4">
   <h2>Create New Parking Lot</h2>
-  <form action="/admin/manage-lots/create" method="POST" class="row g-3 mt-2">
+  <form action="/admin/manage-lots/create/" method="POST" class="row g-3 mt-2">
     <div class="col-md-6">
       <label class="form-label">Location Name</label>
       <input type="text" class="form-control" name="prime_location_name" required>
@@ -41,8 +42,8 @@
       <input type="text" class="form-control" name="pin_code" required>
     </div>
     <div class="col-md-3">
-      <label class="form-label">Price/hour ($)</label>
-      <input type="number" class="form-control" name="price" step="0.01" required>
+      <label class="form-label">Price/hour ()</label>
+      <input type="number" class="form-control" name="price" step="10" required>
     </div>
     <div class="col-md-3">
       <label class="form-label">Max Spots</label>
@@ -75,23 +76,23 @@
     <tbody>
       {% for lot in lots %}
       <tr>
-        <form action="/admin/manage-lots/edit/{{ lot.id }}" method="POST">
+        <form action="/admin/edit_lot/{{ lot.id }}/" method="POST">
           <td>{{ lot.id }}</td>
           <td><input class="form-control" name="prime_location_name" value="{{ lot.prime_location_name }}"></td>
           <td><input class="form-control" name="address" value="{{ lot.address }}"></td>
           <td><input class="form-control" name="pin_code" value="{{ lot.pin_code }}"></td>
           <td><input class="form-control" name="price" value="{{ lot.price }}"></td>
-          <td><input class="form-control" name="maximum_number_of_spots" value="{{ lot.maximum_number_of_spots }}"></td>
+          <td><input type="number" class="form-control" name="maximum_number_of_spots" value="{{ lot.maximum_number_of_spots }}" min="{{ lot.maximum_number_of_spots - lot.available_spots}}"></td>
           <td>{{ lot.available_spots }}</td>
           <td><button type="submit" class="btn btn-sm btn-success">Save</button></td>
         </form>
         <td>
           {% if lot.available_spots == lot.maximum_number_of_spots %}
-          <form action="/admin/manage-lots/delete/{{ lot.id }}" method="POST">
+          <form action="/admin/delete_lot/{{ lot.id }}/" method="POST">
             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
           </form>
           {% else %}
-            <button class="btn btn-sm btn-secondary" disabled>Busy</button>
+            <button class="btn btn-sm btn-secondary" disabled>Spots Active</button>
           {% endif %}
         </td>
       </tr>

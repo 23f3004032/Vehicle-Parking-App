@@ -14,15 +14,13 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
 
+
 # Example route
 @app.route('/dashboard/<string:username>/')
 def dashboard(username):
     return render_template('dashboard.html', username=username)  # Replace with actual user data
 
-# Dashboard route
-# @app.route('/dashboard')
-# def dashboard():
-#     return "Admin/User Dashboard - Status of parking spots and lots."
+
 
 # Parking lots route
 @app.route('/lots/<string:username>/')
@@ -112,6 +110,9 @@ def signin():
         # Handle user authentication logic here
         username = request.form.get('username')
         password = request.form.get('password')
+
+        if username == "admin" and password == "admin":
+            return render_template("admin_dash.html") # Redirect to admin dashboard if admin credentials are used
         # Add authentication logic (check user, verify password)
         user = User.query.filter_by(username=username, password=password).first()
         if not user:
@@ -131,6 +132,15 @@ app.register_blueprint(admin_bp)
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+        user = User.query.filter_by(username="admin").first()  # Check if admin user exists
+        if not user:
+            user = User(username="admin", password="admin")
+            # print("hello")    # Example user, replace with actual user creation logic
+            admin_cred = User(username="admin", password="admin")
+            anki = User(username="Ankit", password="1904")
+            db.session.add(admin_cred)
+            db.session.add(anki)
+            db.session.commit()
     app.run(debug=True)
 
     
