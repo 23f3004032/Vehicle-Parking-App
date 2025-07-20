@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from models import *
+import matplotlib.pyplot as plt
 from admin import admin_bp
 
 

@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from models import db, ParkingLot, ParkingSpot, User, Reservation
 from datetime import datetime
+import matplotlib.pyplot as plt
+import os
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -122,6 +124,8 @@ def manage_users():
     user_data = []
 
     for user in users:
+        if user.username == "admin":
+            continue
         reservations = Reservation.query.filter_by(user_id=user.id).all()
         total = len(reservations)
         user_data.append({
@@ -132,8 +136,85 @@ def manage_users():
 
     return render_template("admin_usermanage.html", users=user_data)
 
+#----------------------------------------------------------------------------#
+# Stats For Admin
+#----------------------------------------------------------------------------#
 
+STATIC_PATH = "static"  # My Flask static directory
 
+@admin_bp.route("/charts")
+def admin_chart():
+    make_reservations_chart()
+    make_spot_status_chart()
+    make_revenue_chart()
+    return render_template("adminchart.html")
 
+#Reservations per lot chart
+def make_reservations_chart():
+    lots = ParkingLot.query.all()
+    reservations = Reservation.query.all()
+    spots = ParkingSpot.query.all()
+    names = []
+    counts = []
+    # Count reservations per lot
+    for lot in lots:
+        for spot in spots:
+            for reservation in reservations:
+                if reservation.spot_id == spot.id and spot.lot_id == lot.id:
+                    if lot.prime_location_name not in names:
+                        names.append(lot.prime_location_name)
+                        counts.append(1)
+                    else:
+                        index = names.index(lot.prime_location_name)
+                        counts[index] += 1
+                    
 
+    plt.figure(figsize=(6, 4))
+    plt.bar(names, counts, color="royalblue")
+    plt.title("Total Reservations per Lot")
+    plt.ylabel("Reservations")
+    plt.xticks(rotation=30)
+    plt.tight_layout()
+    plt.savefig(os.path.join(STATIC_PATH, "reservations.png"))
+    plt.close()
 
+# Spot Status Chart(available vs Occupied)
+def make_spot_status_chart():
+    available = ParkingSpot.query.filter_by(status='A').count()
+    occupied = ParkingSpot.query.filter_by(status='O').count()
+
+    plt.figure(figsize=(6, 4))
+    plt.pie([available, occupied], labels=["Available", "Occupied"], colors=["green", "red"], autopct="%1.1f%%")
+    plt.title("Overall Spot Status")
+    plt.tight_layout()
+    plt.savefig(os.path.join(STATIC_PATH, "spot_status.png"))
+    plt.close()
+
+#Revenue per Lot Chart   
+def make_revenue_chart():
+    lots = ParkingLot.query.all()
+    reservations = Reservation.query.all()
+    spots = ParkingSpot.query.all()
+    names = []
+    revenues = []
+    # names = [lot.prime_location_name for lot in lots]
+    # revenues = [len(lot.reservations) * lot.price for lot in lots]
+
+    for lot in lots:
+        for spot in spots:
+            for reservation in reservations:
+                if reservation.spot_id == spot.id and spot.lot_id == lot.id:
+                    if lot.prime_location_name not in names:
+                        names.append(lot.prime_location_name)
+                        revenues.append(lot.price)
+                    else:
+                        index = names.index(lot.prime_location_name)
+                        revenues[index] += lot.price
+
+    plt.figure(figsize=(6, 4))
+    plt.barh(names, revenues, color="orange")
+    plt.title("Revenue per Lot (₹)")
+    plt.xlabel("Revenue")
+    plt.tight_layout()
+    plt.savefig(os.path.join(STATIC_PATH, "chart_revenue.png"))
+    plt.close()
