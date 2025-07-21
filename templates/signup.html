@@ -4,22 +4,20 @@
     <meta charset="UTF-8">
     <title>Only Cars - Sign Up</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- Bootstrap CSS + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 </head>
 <body class="bg-light">
 
-<!-- Header/Navbar -->
-<nav class="navbar navbar-dark bg-dark">
+<!---------------------------------NavBar---------------------------------------->
+<nav class="navbar navbar-dark bg-dark fixed-top">
     <div class="container">
-        <a class="navbar-brand fw-bold text-info" href="#">Only Cars</a>
+        <a class="navbar-brand fw-bold text-info" href="/signup/">Only Cars</a>
     </div>
 </nav>
 
-<!-- Hero + Form Section -->
-<div class="container d-flex flex-column justify-content-center align-items-center text-center" style="min-height: 90vh;">
+<!---------------------------------Sign up section---------------------------------------->
+<div class="container d-flex flex-column justify-content-center align-items-center text-center mt-5" style="min-height: 90vh;">
     
     <!-- Decorative Icon -->
     <div class="mb-4">
@@ -34,7 +32,7 @@
         Join now and reserve your spot before someone else does.
     </p>
 
-    <!-- Sign Up Form Box -->
+<!------------------------------- Signup form, fill details ------------------------------------------>
     <div class="card shadow-lg border-0 p-4" style="width: 100%; max-width: 400px;">
         <h4 class="mb-3 text-secondary">Sign Up</h4>
         <form method="POST" action="/signup">
@@ -54,23 +52,21 @@
                 <a href="/" class="text-decoration-none text-info fw-semibold">Sign In</a>
             </p>
 
-            <!-- Flash Messages -->
-            {% if msg %}
-                {% set type = type if type else "alert" %}
-                {% if type == "alert" %}
-                    <div class="alert alert-danger mt-3" role="alert">
-                        {{ msg }}
-                    </div>
-                {% elif type == "success" %}
-                    <div class="alert alert-success mt-3" role="alert">
-                        {{ msg }}
-                    </div>
-                {% endif %}
+<!--------------------------------- Messages ---------------------------------------->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show mt-3" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                {% endfor %}
             {% endif %}
+            {% endwith %}
         </form>
     </div>
 
-    <!-- Decorative Icons -->
+    <!-- Cool Car Icons -->
     <div class="mt-5 text-muted">
         <i class="bi bi-car-front-fill fs-2 me-3"></i>
         <i class="bi bi-truck-front-fill fs-2 me-3"></i>
@@ -78,7 +74,6 @@
     </div>
 </div>
 
-<!-- Footer -->
 <footer class="text-center text-muted py-3">
     &copy; 2025 Only Cars. All rights reserved.
 </footer>

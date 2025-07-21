@@ -1,4 +1,5 @@
- <!DOCTYPE html>
+<!--------------This Page opens when you click ##(View Bookings)## in Dashboard------------------>
+ DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +9,7 @@
     <title>Dashboard - Vehicle Parking App</title>
 </head>
 <body>
+<!---------------------------------NavBar---------------------------------------->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-info" href="/">Only Cars</a>
@@ -17,6 +19,7 @@
                         <i class="bi bi-person-circle fs-5"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/profile/{{username}}">Profile</a></li>
                         <li><a class="dropdown-item" href="/dashboard/{{username}}">Dashboard</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
@@ -26,7 +29,7 @@
         </div>
     </nav>
  
-   
+<!---------------- Leave Spot button and Parked car details ---------------------->  
     <div class="container" style="margin-top: 100px; margin-bottom: 100px;">
         <h2 class="mb-4">Welcome, {{ username }}!</h2>
         
@@ -56,7 +59,7 @@
         </div>  
 
         <br>
-        
+<!--------------------------------- Final Cost Calculation for Parking ---------------------------------------->       
         <div class="row g-4">
             <h4 class="mb-4">Past Bookings</h4>
             {% for lot in lots %}

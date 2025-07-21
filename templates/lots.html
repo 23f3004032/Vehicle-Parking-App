@@ -1,3 +1,4 @@
+<!----------------This Page opens when you click ##(Book now)## in Dashboard---------------------->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,6 +12,7 @@
     <title>Document</title>
 </head>
 <body>
+<!------------------------------- Navbar -------------------------------------------->
      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-info" href="/">Only Cars</a>
@@ -20,6 +22,7 @@
                         <i class="bi bi-person-circle fs-5"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/profile/{{username}}">Profile</a></li>
                         <li><a class="dropdown-item" href="/dashboard/{{username}}">Dashboard</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
@@ -30,7 +33,7 @@
     </nav>
 
 
-    
+<!--------------------------- Accordion style for showing lot details -------------- -------------------------->
 <div id="accordion" style="margin-top: 3cm; margin-left: 2cm; margin-right: 2cm; margin-bottom: 3cm;">
   
 {% for lot in lots %}
@@ -52,11 +55,11 @@
         <p><strong>Available Spots:</strong> {{ lot.available_spots }}</p>
         <p><strong>Total Spots:</strong> {{ lot.maximum_number_of_spots }}</p>
         {%if lot.available_spots > 0 %}
+<!---------------------------- Booking spots and availability buttons ------------------------------>
           <a href="/reserve/{{ lot.id }}/{{ username }}" class="btn btn-primary">Book a Spot</a>
         {% else %}
           <a class="btn btn-danger">No Spots Available</a>
         {% endif %}
-        <!-- <a href="/reserve/{{ lot.id }}/{{ username }}" class="btn btn-primary">Reserve Spot</a> -->
 
       </div>
     </div>

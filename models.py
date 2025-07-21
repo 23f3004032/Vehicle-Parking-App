@@ -3,14 +3,14 @@ from datetime import datetime
 
 db=SQLAlchemy()
 
-# User model
+# -------------------------User model---------------------------------#
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(128), nullable=False)
     
 
-# ParkingLot model
+#--------------------------- ParkingLot model-----------------------------#
 class ParkingLot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     prime_location_name = db.Column(db.String(120), nullable=False)
@@ -23,7 +23,7 @@ class ParkingLot(db.Model):
     spots = db.relationship('ParkingSpot', backref='lot', lazy=True)
 
 
-# ParkingSpot model
+#------------------------------ ParkingSpot model ----------------------------#
 class ParkingSpot(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lot_id = db.Column(db.Integer, db.ForeignKey('parking_lot.id'), nullable=False)
@@ -31,7 +31,7 @@ class ParkingSpot(db.Model):
     # Relationship to Reservation
     reservations = db.relationship('Reservation', backref='spot', lazy=True)
 
-# Reservation model
+#----------------------------Reservation model----------------------------#
 class Reservation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spot_id = db.Column(db.Integer, db.ForeignKey('parking_spot.id'), nullable=False)
@@ -42,6 +42,3 @@ class Reservation(db.Model):
     vehicle_num = db.Column(db.String(20), nullable=False)
     user = db.relationship('User', backref='reservations')
 
-    # Add more fields as needed
-
-# Admin is a superuser, no registration required. You can handle admin logic separately in your app.

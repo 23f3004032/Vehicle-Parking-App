@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash,session
 from models import db, ParkingLot, ParkingSpot, User, Reservation
 from datetime import datetime
 import matplotlib
@@ -8,19 +8,23 @@ import os
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
-# Admin Dashboard Landing Page
+# ------------------------- Admin Dashboard Landing Page ----------------------------#
 @admin_bp.route("/dashboard")
 def admin_dashboard():
+    if 'user' not in session or session.get('role') != 'admin':
+        flash("Access denied. Please log in as admin.", "danger")
+        return redirect(url_for('signin'))
     return render_template("admin_dash.html")
 
-
-# Parking Lot Management Page
+#----------------------------------------------------------------------------#
+#------------------- -------Parking Lot Management --------------------------#
+#----------------------------------------------------------------------------#
 @admin_bp.route("/lots")
 def manage_lots():
     lots = ParkingLot.query.all()
     return render_template("admin_plm.html", lots=lots)
 
-# Create a New Parking Lot
+#------------- Create a New Parking Lot -------------------#
 @admin_bp.route("/manage-lots/create/", methods=["POST"])
 def create_lot():
     name = request.form["prime_location_name"]
@@ -40,7 +44,7 @@ def create_lot():
     db.session.add(lot)
     db.session.commit()
 
-    # Auto-generate parking spots
+    #-------- Auto-generate parking spots for created lot----------#
     for _ in range(max_spots):
         spot = ParkingSpot(lot_id=lot.id, status="A")
         db.session.add(spot)
@@ -48,7 +52,7 @@ def create_lot():
 
     return redirect(url_for("admin.manage_lots", lots=ParkingLot.query.all()))
 
-# Edit Parking Lot
+#----------------------- Edit Parking Lot Details ---------------------#
 @admin_bp.route("/edit_lot/<int:lot_id>/", methods=["POST"])
 def edit_lot(lot_id):
     lot = ParkingLot.query.get_or_404(lot_id)
@@ -61,7 +65,7 @@ def edit_lot(lot_id):
     lot.maximum_number_of_spots = int(request.form["maximum_number_of_spots"])
     db.session.commit()
 
-    # Auto-generate new spots if increasing and delete if decreasing
+    #------- Auto-generate new spots if increasing and delete if decreasing--------#
     new_max = lot.maximum_number_of_spots
     if new_max > old_max:
         for _ in range(new_max - old_max):
@@ -79,32 +83,39 @@ def edit_lot(lot_id):
 
     return redirect(url_for("admin.manage_lots", lots=ParkingLot.query.all()))
 
-# Delete Parking Lot
+#------------------- Completely Delete the Parking Lot------------------#
 @admin_bp.route("/delete_lot/<int:lot_id>/", methods=["POST"])
 def delete_lot(lot_id):
-    
-    # Delete related spots first
     ParkingLot.query.filter_by(id=lot_id).delete()
+    delete_spots(lot_id)  # Delete all spots associated with the lot
     db.session.commit()
     return redirect(url_for("admin.manage_lots", lots=ParkingLot.query.all()))
 
-# Live Status Overview
+def delete_spots(lot_id):
+    spots = ParkingSpot.query.filter_by(lot_id=lot_id).all()
+    for spot in spots:
+        db.session.delete(spot)
+    db.session.commit()
+
+#----------------------------------------------------------------------------#
+#--------------------- Live Status Overview ---------------------------------#
+#----------------------------------------------------------------------------#
 @admin_bp.route("/status")
 def lot_status():
     lots = ParkingLot.query.all()
     return render_template("admin_status.html", lots=lots)
 
-# Live Status with Spot-Level Details
+#-----------------Live Status with Spot-Level Details-----------------------#
 @admin_bp.route("/status/<int:lot_id>")
 def view_spots(lot_id):
     lots = ParkingLot.query.all()
     selected_lot = ParkingLot.query.get_or_404(lot_id)
 
-    # Filtering logic
+    #------ Filtering logic----------------#
     search_id = request.args.get("search_id", "")
     status_filter = request.args.get("status_filter", "")
 
-    # Filter spots
+    #---------Filter spots------------------#
     filtered_spots = selected_lot.spots
     if search_id:
         filtered_spots = [s for s in filtered_spots if str(s.id) == search_id]
@@ -119,7 +130,9 @@ def view_spots(lot_id):
     )
 
 
-# User Management Page
+#----------------------------------------------------------------------------#
+#----------- User Management(all details available in data)------------------#
+#----------------------------------------------------------------------------#
 @admin_bp.route("/users")
 def manage_users():
     users = User.query.all()
@@ -139,38 +152,33 @@ def manage_users():
     return render_template("admin_usermanage.html", users=user_data)
 
 #----------------------------------------------------------------------------#
-# Stats For Admin
+# Analytics For Admin
 #----------------------------------------------------------------------------#
 
 STATIC_PATH = "static"  # My Flask static directory
 
 @admin_bp.route("/charts")
-def admin_chart():
+def admin_chart():     #Making Charts for Admin Dashboard
     make_reservations_chart()
     make_spot_status_chart()
     make_revenue_chart()
     return render_template("adminchart.html")
 
-#Reservations per lot chart
+#-----------------------Reservations per lot chart ------------------#
 def make_reservations_chart():
     lots = ParkingLot.query.all()
     reservations = Reservation.query.all()
     spots = ParkingSpot.query.all()
-  
-    # Step 1: Map spot_id → lot_id
-    spot_to_lot = {spot.id: spot.lot_id for spot in spots}
 
-    # Step 2: Initialize count for each lot
+    spot_to_lot = {spot.id: spot.lot_id for spot in spots}
     lot_id_to_name = {lot.id: lot.prime_location_name for lot in lots}
     lot_counts = {lot.id: 0 for lot in lots}
 
-    # Step 3: Count reservations per lot using spot_id → lot_id
     for res in reservations:
         lot_id = spot_to_lot.get(res.spot_id)
         if lot_id in lot_counts:
             lot_counts[lot_id] += 1
 
-    # Step 4: Plot
     names = [lot_id_to_name[lot_id] for lot_id in lot_counts]
     counts = [lot_counts[lot_id] for lot_id in lot_counts]
 
@@ -183,7 +191,7 @@ def make_reservations_chart():
     plt.savefig(os.path.join(STATIC_PATH, "reservations.png"))
     plt.close()
 
-# Spot Status Chart(available vs Occupied)
+#------------------ Spot Status Chart(available vs Occupied)------------------#
 def make_spot_status_chart():
     available = ParkingSpot.query.filter_by(status='A').count()
     occupied = ParkingSpot.query.filter_by(status='O').count()
@@ -195,29 +203,22 @@ def make_spot_status_chart():
     plt.savefig(os.path.join(STATIC_PATH, "spot_status.png"))
     plt.close()
 
-#Revenue per Lot Chart   
+#----------------------- Revenue per Lot Chart - ------------------#   
 def make_revenue_chart():
     lots = ParkingLot.query.all()
     reservations = Reservation.query.all()
     spots = ParkingSpot.query.all()
 
-    # Step 1: Map spot_id → lot_id
     spot_to_lot = {spot.id: spot.lot_id for spot in spots}
-
-    # Step 2: Map lot_id → price and lot name
     lot_id_to_price = {lot.id: lot.price for lot in lots}
     lot_id_to_name = {lot.id: lot.prime_location_name for lot in lots}
-
-    # Step 3: Initialize revenue for each lot
     lot_revenue = {lot.id: 0 for lot in lots}
 
-    # Step 4: Count revenue per lot using reservations
     for res in reservations:
         lot_id = spot_to_lot.get(res.spot_id)
         if lot_id in lot_revenue:
             lot_revenue[lot_id] += lot_id_to_price[lot_id]
 
-    # Step 5: Prepare names and revenues
     names = [lot_id_to_name[lot_id] for lot_id in lot_revenue]
     revenues = [lot_revenue[lot_id] for lot_id in lot_revenue]
 

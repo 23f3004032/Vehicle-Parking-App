@@ -1,3 +1,4 @@
+<!--------------This Page opens when you click ##(View Analytics)## in Dashboard------------------>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body style="margin-top: 3cm; margin-bottom: 3cm;">
+<!---------------------------------NavBar---------------------------------------->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-info" href="/">Only Cars</a>
@@ -16,6 +18,7 @@
                         <i class="bi bi-person-circle fs-5"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="/profile/{{username}}">Profile</a></li>
                         <li><a class="dropdown-item" href="/dashboard/{{username}}">Dashboard</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
@@ -25,16 +28,12 @@
         </div>
     </nav>
 
-
+<!--------------------------------- Charts ---------------------------------------->
     <div class="container mt-5">
         <h2 class="text-center mt-4 mb-4">Your Parking Analytics</h2>
 
         <div class="text-center mb-4">
             <img src="/static/total_time_parked.png" class="img-fluid" alt="User Chart">
-        </div>
-
-        <div class="text-center">
-            <a href="/dashboard/{{username}}" class="btn btn-secondary">Back to Dashboard</a>
         </div>
     </div>
 
