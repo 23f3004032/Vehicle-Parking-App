@@ -8,16 +8,19 @@ import matplotlib.pyplot as plt
 import os
 from admin import admin_bp
 import random
+import google.generativeai as genai
 
 app = Flask(__name__)
 app.secret_key= '19042004'  # Set a secret key for session management
 CORS(app)
+
 
 # Configurations
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///parking.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db.init_app(app)
+
 
 #------------------------------------------------------------#
 #-------------------------Sign In route----------------------#
@@ -199,6 +202,49 @@ def make_user_time_chart(username):
     plt.tight_layout()
     plt.savefig("static/total_time_parked.png")
     plt.close()
+
+#----------------------------------------------------------------------------#
+#---------------------- Chatbot for User -------------------------------------#
+#----------------------------------------------------------------------------#
+# Google Gemini Chatbot Configuration
+GOOGLE_API_KEY = "AIzaSyBYWgscTJS7qzzEGD2fn3mRUiruBG1JNFU"
+genai.configure(api_key=GOOGLE_API_KEY)
+model = genai.GenerativeModel('gemini-2.0-flash')
+
+
+@app.route("/chatbot", methods=["GET","POST"])
+def chatbot():
+    response = None
+    if request.method == "POST" or request.method == "GET":
+        user_message = request.form.get("message", "")
+        prompt = f"""
+        You are an AI assistant for a Vehicle Parking Management System.
+
+        Answer the user's question concisely and only if it's related to parking, reservations, or vehicle management. If it's not related, reply: "Please log in to get more details."
+
+        Examples:
+        Q: How do I reserve a parking spot?
+        A: Visit the 'Reserve Spot' section, select a parking lot, and enter your vehicle number to reserve a spot.
+
+        Q: How can I view my bookings?
+        A: Go to the 'My Bookings' section to see all your reservations and their details.
+
+        Q: What should I do if I want to leave a parking spot?
+        A: Click on the 'Leave Spot' button next to your reservation to mark the spot as available.
+
+        Q: Will I be charged for parking?
+        A: Yes, you will be charged based on the duration of your parking. The cost will be calculated automatically when you leave the spot.
+
+        Q: Will my parking spot be safe?
+        A: Yes, all parking spots are monitored and maintained to ensure the safety of your vehicle.
+
+        Now answer this question:
+        Q: {user_message}
+        A:"""
+        reply = model.generate_content(prompt)
+        response = reply.candidates[0].content.parts[0].text.strip().replace("\n", " ")
+    return render_template("chatbot.html", response=response)
+
 
 #----------Register the admin------#
 app.register_blueprint(admin_bp)
