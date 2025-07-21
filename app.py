@@ -7,7 +7,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
 from admin import admin_bp
-
+import random
 
 app = Flask(__name__)
 CORS(app)
@@ -124,10 +124,26 @@ def signin():
         return redirect(url_for('dashboard',username=username))  # Replace with redirect or template
     return render_template('signin.html')
 
-# Profile route
-@app.route('/profile/<string:username>/')
+
+#profle route
+@app.route('/profile/<username>/')
 def profile(username):
-    return render_template('profile.html', username=username)
+    quotes = [
+        "Drive safe, someone loves you.",
+        "Life is a journey, enjoy the ride.",
+        "Keep calm and drive on.",
+        "Every mile is a memory.",
+        "The road to success is always under construction.",
+        "Stay alert, don’t get hurt.",
+        "Your destination is never a place, but a new way of seeing things.",
+        "Drive like every child on the street is your own.",
+        "Safe driving is no accident.",
+        "The best car safety device is a rear-view mirror with a cop in it.",
+        "A smooth ride is a safe ride."
+    ]
+    quote = random.choice(quotes)
+    return render_template("profile.html", username=username, quote=quote)
+
 
 #----------------------------------------------------------------------------#
 # Stats For User
