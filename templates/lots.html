@@ -16,60 +16,84 @@
      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-info" href="/">Only Cars</a>
-            <div class="d-flex align-items-center">
-                <div class="dropdown">
-                    <button class="btn btn-outline-light rounded-circle" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle fs-5"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/profile/{{username}}">Profile</a></li>
-                        <li><a class="dropdown-item" href="/dashboard/{{username}}">Dashboard</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
-                    </ul>
-                </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/dashboard/{{username}}" class="btn btn-outline-info">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Dashboard
+                </a>
+                <a href="/logout" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right me-1"></i>
+                    Logout
+                </a>
             </div>
         </div>
     </nav>
 
 
-<!--------------------------- Accordion style for showing lot details -------------- -------------------------->
-<div id="accordion" style="margin-top: 3cm; margin-left: 2cm; margin-right: 2cm; margin-bottom: 3cm;">
-  
-{% for lot in lots %}
-  
-  <div class="card">
-    <div class="card-header" id="headingOne">
-      <h5 class="mb-0">
-        <button class="btn btn-success" data-toggle="collapse" data-target="#collapse{{loop.index}}" aria-expanded="true" aria-controls="collapseOne">
-          Parking Lot {{ lot.id }}
-        </button>
-      </h5>
+<!--------------------------- Available Parking Lots -------------------------->
+<div class="container" style="margin-top: 100px; margin-bottom: 100px;">
+    <h2 class="mb-4 text-center">Available Parking Lots</h2>
+    
+    <div class="row g-4">
+        {% for lot in lots %}
+        <div class="col-lg-4 col-md-6">
+            <div class="card h-100 border-0 shadow-lg">
+                <div class="card-header bg-info text-white text-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-geo-alt-fill me-2"></i>
+                        {{ lot.prime_location_name }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <p class="mb-2">
+                            <i class="bi bi-pin-map text-secondary me-2"></i>
+                            <strong>Address:</strong> {{ lot.address }}
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-mailbox text-secondary me-2"></i>
+                            <strong>Pincode:</strong> {{ lot.pin_code }}
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-currency-rupee text-success me-2"></i>
+                            <strong>Price:</strong> ₹{{ lot.price }} per hour
+                        </p>
+                    </div>
+                    
+                    <div class="row text-center mb-3">
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <h6 class="mb-1 text-success">Available</h6>
+                                <h4 class="mb-0 text-success">{{ lot.available_spots }}</h4>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="bg-light p-2 rounded">
+                                <h6 class="mb-1 text-primary">Total</h6>
+                                <h4 class="mb-0 text-primary">{{ lot.maximum_number_of_spots }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-transparent text-center">
+                    {% if lot.available_spots > 0 %}
+                        <a href="/reserve/{{ lot.id }}/{{ username }}" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-car-front me-2"></i>
+                            Book a Spot
+                        </a>
+                    {% else %}
+                        <button class="btn btn-danger btn-lg w-100" disabled>
+                            <i class="bi bi-x-circle me-2"></i>
+                            No Spots Available
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
     </div>
-
-    <div id="collapse{{loop.index}}" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body">
-        <p><strong>Name:</strong> {{ lot.prime_location_name }}</p>
-        <p><strong>Location:</strong> {{ lot.address }}</p>
-        <p><strong>Pincode:</strong> {{ lot.pin_code }}</p>
-        <p><strong>Available Spots:</strong> {{ lot.available_spots }}</p>
-        <p><strong>Total Spots:</strong> {{ lot.maximum_number_of_spots }}</p>
-        {%if lot.available_spots > 0 %}
-<!---------------------------- Booking spots and availability buttons ------------------------------>
-          <a href="/reserve/{{ lot.id }}/{{ username }}" class="btn btn-primary">Book a Spot</a>
-        {% else %}
-          <a class="btn btn-danger">No Spots Available</a>
-        {% endif %}
-
-      </div>
-    </div>
-  </div>
-
-{% endfor %}
-  
 </div>
-
-
 
     <footer class="bg-dark text-white text-center py-3 fixed-bottom">
         <div class="container">

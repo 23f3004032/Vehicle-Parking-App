@@ -115,7 +115,7 @@ def logout():
 #------------------------------------------------------------#
 @app.route('/lots/<string:username>/')
 def lots(username):
-    lots = ParkingLot.query.all()  # Fetch all parking lots from the database
+    lots = ParkingLot.query.all() 
     return render_template('lots.html', username=username, lots=lots)
 
 
@@ -128,7 +128,7 @@ def reserve(lot_id, username):
         # Handle reservation logic here
         vehicle_num = request.form.get('vehicle')
         user = User.query.filter_by(username=username).first()
-        spot = ParkingSpot.query.filter_by(lot_id=lot_id, status='A').first()  # Get the first available spot in the lot
+        spot = ParkingSpot.query.filter_by(lot_id=lot_id, status='A').first() 
         if spot:
             reservation = Reservation(spot_id=spot.id, user_id=user.id,vehicle_num=vehicle_num)
             spot.status = 'O'  # Mark spot as occupied
@@ -148,11 +148,11 @@ def reserve(lot_id, username):
 @app.route('/bookings/<string:username>/', methods=['GET', 'POST'])
 def bookings(username):
     user = User.query.filter_by(username=username).first()
-    reservations = Reservation.query.filter_by(user_id=user.id).all()  # Fetch user's reservations
+    reservations = Reservation.query.filter_by(user_id=user.id).all() 
 
-    spots = ParkingSpot.query.all()  # Fetch all parking spots
-    lots = ParkingLot.query.all()  # Fetch all parking lots
-    return render_template('booking.html', username=username, lots=lots, spots=spots, reservations=reservations)  # Replace with actual bookings data
+    spots = ParkingSpot.query.all() 
+    lots = ParkingLot.query.all() 
+    return render_template('booking.html', username=username, lots=lots, spots=spots, reservations=reservations) 
 
 #------------------------------------------------------------#
 #------------------- Leave Spot route -----------------------#  
@@ -164,7 +164,7 @@ def leave_spot(id, username):
         spot = ParkingSpot.query.filter_by(id=reservation.spot_id).first()
         lot = ParkingLot.query.filter_by(id=spot.lot_id).first()
         lot.available_spots += 1  
-        spot.status = 'A'  # Mark spot as available
+        spot.status = 'A' 
         now = datetime.utcnow()
         duration = now - reservation.parking_timestamp
         hours = duration.total_seconds() / 3600

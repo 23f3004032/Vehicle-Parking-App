@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Admin Analytics</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body class="bg-light">
 
@@ -13,7 +14,7 @@
         <a class="navbar-brand" href="/admin/dashboard">Parking Admin</a>
         <ul class="navbar-nav me-auto">
             <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="/admin/manage-lots">Manage Lots</a></li>
+            <li class="nav-item"><a class="nav-link" href="/admin/lots">Manage Lots</a></li>
             <li class="nav-item"><a class="nav-link" href="/admin/status">Live Status</a></li>
             <li class="nav-item"><a class="nav-link" href="/admin/users">Users</a></li>
             <li class="nav-item"><a class="nav-link active" href="#">Analytics</a></li>
@@ -22,39 +23,66 @@
     </div>
 </nav>
 
+<!------------------------------- Analytics Header ---------------------------------------->
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-white rounded shadow-sm p-4">
+                <h2 class="mb-1 text-dark fw-bold">
+                    <i class="bi bi-graph-up text-primary me-2"></i>
+                    Analytics Overview
+                </h2>
+                <p class="text-muted mb-0">Insights About parking lot performance and revenue</p>
+            </div>
+        </div>
+    </div>
 
-<!------------------------------- Analytics content(Graph and Chart) ---------------------------------------->
-
-<div class="container mt-4">
-    <h2 class="mb-4">Analytics Overview</h2>
-
+<!------------------------------- Analytics Cards ---------------------------------------->
     <div class="row g-4">
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="/static/reservations.png" class="card-img-top" alt="Total Reservations Per Lot">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Reservations per Lot</h5>
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-primary text-white border-0">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="bi bi-bar-chart me-2"></i>
+                        Reservations Analysis
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/reservations.png" class="card-img" alt="Total Reservations Per Lot" style="height: 300px; object-fit: contain;">
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="/static/spot_status.png" class="card-img-top" alt="Spot Availability">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Available vs Occupied</h5>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-success text-white border-0">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="bi bi-pie-chart me-2"></i>
+                        Spot Utilization
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/spot_status.png" class="card-img" alt="Spot Availability" style="height: 300px; object-fit: contain;">
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm">
-                <img src="/static/chart_revenue.png" class="card-img-top" alt="Revenue per Lot">
-                <div class="card-body text-center">
-                    <h5 class="card-title">Revenue per Lot (₹)</h5>
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-header bg-warning text-dark border-0">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="bi bi-currency-rupee me-2"></i>
+                        Revenue Analysis
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/chart_revenue.png" class="card-img" alt="Revenue per Lot" style="height: 300px; object-fit: contain;">
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

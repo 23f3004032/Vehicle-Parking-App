@@ -12,52 +12,109 @@
 </head>
 <body>
 <!---------------------------------NavBar---------------------------------------->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-info" href="/">Only Cars</a>
-            <div class="d-flex align-items-center">
-                <div class="dropdown">
-                    <button class="btn btn-outline-light rounded-circle" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle fs-5"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/profile/{{username}}">Profile</a></li>
-                        <li><a class="dropdown-item" href="/dashboard/{{username}}">Dashboard</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
-                    </ul>
-                </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/dashboard/{{username}}" class="btn btn-outline-info">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Dashboard
+                </a>
+                <a href="/logout" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right me-1"></i>
+                    Logout
+                </a>
             </div>
         </div>
     </nav>
-<!------------------ Enter Vehicle number and confim booking -------------------->
-    <div class="container" style="margin-top: 100px;">
-        <h2 class="mb-4">Parking Lots</h2>
-        
-        <form method="post" action="/reserve/{{lot.id}}/{{username}}/">
-            <div class="input-group mb-3">
-                <label class="input-group-text" for="vehicle">Vehicle Number</label>
-                <input type="text" class="form-control" name="vehicle" placeholder="Vehicle Number">
-                <button class="btn btn-primary" type="submit">Confirm Spot</button>
-            </div>
-        </form>
-    </div>    
 
-    
-     {%if msg %}
-        {% set type = type if type else "alert" %}
-        {% if type == "alert" %}
-            <div class="alert alert-danger mt-3" style="margin-left: 3cm; margin-right: 3cm;" role="alert">
-                {{ msg }}
+<!------------------ Modern Vehicle Booking Form -------------------->
+    <div class="container" style="margin-top: 100px; margin-bottom: 100px;">
+        <!-- Amazing Alert Messages - Moved to top for visibility -->
+        {%if msg %}
+            <div class="row justify-content-center mb-4">  
+                <div class="col-lg-6 col-md-8">
+                    {% set type = type if type else "alert" %}
+                    {% if type == "alert" %}
+                        <div class="alert alert-danger border-0 shadow-lg d-flex align-items-center" role="alert">
+                            <div class="me-3">
+                                <i class="bi bi-exclamation-triangle-fill fs-2"></i>
+                            </div>
+                            <div>
+                                <h6 class="alert-heading mb-1">Booking Failed!</h6>
+                                <p class="mb-0">{{ msg }}</p>
+                            </div>
+                        </div>
+                    {% elif type == "success" %}
+                        <div class="alert alert-success border-0 shadow-lg d-flex align-items-center animate__animated animate__bounceIn" role="alert">
+                            <div class="me-3">
+                                <i class="bi bi-check-circle-fill fs-2"></i>
+                            </div>
+                            <div>
+                                <h6 class="alert-heading mb-1">Booking Successful! 🎉</h6>
+                                <p class="mb-0">{{ msg }}</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
-        {% elif type == "success" %}
-            <div class="alert alert-success mt-3" style="margin-left: 3cm; margin-right: 3cm;" role="alert">
-                {{ msg }}
-            </div> 
         {% endif %}
-    {% endif %}
 
-    
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card border-0 shadow-lg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="card-header bg-transparent text-white text-center py-4 border-0">
+                        <div class="mb-2">
+                            <i class="bi bi-car-front-fill" style="font-size: 3rem; color: #ffd700;"></i>
+                        </div>
+                        <h3 class="mb-1 fw-bold">Reserve Your Spot</h3>
+                        <p class="mb-0 opacity-90">Secure your parking space in seconds</p>
+                    </div>
+                    
+                    <div class="card-body p-4" style="background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);">
+                        <form method="post" action="/reserve/{{lot.id}}/{{username}}/">
+                            <div class="mb-4">
+                                <label for="vehicle" class="form-label fs-6 fw-bold text-dark mb-3">
+                                    <i class="bi bi-credit-card-2-front text-primary me-2"></i>
+                                    Vehicle Registration
+                                </label>
+                                
+                                <div class="position-relative">
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-primary text-white border-0">
+                                            <i class="bi bi-car-front"></i>
+                                        </span>
+                                        <input type="text" 
+                                               class="form-control border-0 shadow-sm" 
+                                               id="vehicle"
+                                               name="vehicle" 
+                                               placeholder="Enter your vehicle number"
+                                               style="text-transform: uppercase; font-weight: 600; padding: 12px; background: linear-gradient(45deg, #f8f9fa, #ffffff);"
+                                               required>
+                                    </div>
+                                    <div class="position-absolute top-50 end-0 translate-middle-y me-3">
+                                        <i class="bi bi-shield-check text-success"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid">
+                                <button class="btn btn-lg py-3 border-0 fw-bold text-white" 
+                                        type="submit"
+                                        style="background: linear-gradient(45deg, #28a745, #20c997); border-radius: 10px; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);">
+                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                    CONFIRM BOOKING
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="bg-dark text-white text-center py-3 fixed-bottom">
         <div class="container">
             <span>&copy; 2025 Vehicle Parking App. All rights reserved.</span>
@@ -67,3 +124,4 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

@@ -13,10 +13,6 @@
 <nav class="navbar navbar-dark bg-dark fixed-top">
     <div class="container">
         <a class="navbar-brand fw-bold text-info" href="/">Only Cars</a>
-        <button class="btn btn-outline-light rounded-circle" type="button" button>
-        <a href="/chatbot" class="btn btn-outline-info ms-auto">
-            <i class="bi bi-robot me-1"></i> Assistant
-        </a>
     </div>
 </nav>
 
@@ -78,6 +74,12 @@
     </div>
 </div>
 
+<!-- Floating Assistant Widget -->
+<div class="position-fixed bottom-0 end-0 p-4" style="z-index: 1000;">
+    <a href="/chatbot" class="btn btn-info shadow-lg" style="border-radius: 50%; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+        <i class="bi bi-robot fs-4 text-white"></i>
+    </a>
+</div>
 
 <footer class="text-center text-muted py-3">
     &copy; 2025 Only Cars. All rights reserved.

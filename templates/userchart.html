@@ -7,35 +7,55 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
-<body style="margin-top: 3cm; margin-bottom: 3cm;">
+<body class="bg-light">
 <!---------------------------------NavBar---------------------------------------->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container">
             <a class="navbar-brand fw-bold text-info" href="/">Only Cars</a>
-            <div class="d-flex align-items-center">
-                <div class="dropdown">
-                    <button class="btn btn-outline-light rounded-circle" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-person-circle fs-5"></i>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="/profile/{{username}}">Profile</a></li>
-                        <li><a class="dropdown-item" href="/dashboard/{{username}}">Dashboard</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/logout">Logout</a></li>
-                    </ul>
-                </div>
+            <div class="d-flex align-items-center gap-2">
+                <a href="/dashboard/{{username}}" class="btn btn-outline-info">
+                    <i class="bi bi-arrow-left me-1"></i>
+                    Back to Dashboard
+                </a>
+                <a href="/logout" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right me-1"></i>
+                    Logout
+                </a>
             </div>
         </div>
     </nav>
 
-<!--------------------------------- Charts ---------------------------------------->
-    <div class="container mt-5">
-        <h2 class="text-center mt-4 mb-4">Your Parking Analytics</h2>
-
-        <div class="text-center mb-4">
-            <img src="/static/total_time_parked.png" class="img-fluid" alt="User Chart">
+<!--------------------------------- Analytics Header ---------------------------------------->
+<div class="container-fluid" style="margin-top: 100px; margin-bottom: 100px;">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-white rounded shadow-sm p-4">
+                <h2 class="mb-1 text-dark fw-bold">
+                    <i class="bi bi-graph-up text-info me-2"></i>
+                    Your Parking Analytics
+                </h2>
+                <p class="text-muted mb-0">Track your parking activity and time spent</p>
+            </div>
         </div>
     </div>
+
+<!--------------------------------- Charts ---------------------------------------->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-md-10">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-info text-white border-0">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Total Parking Time Analysis
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    <img src="/static/total_time_parked.png" class="card-img" alt="User Parking Analytics" style="height: 400px; object-fit: contain;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
     <footer class="bg-dark text-white text-center py-3 fixed-bottom">
         <div class="container">

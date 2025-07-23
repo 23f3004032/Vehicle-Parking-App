@@ -87,7 +87,7 @@ def edit_lot(lot_id):
 @admin_bp.route("/delete_lot/<int:lot_id>/", methods=["POST"])
 def delete_lot(lot_id):
     ParkingLot.query.filter_by(id=lot_id).delete()
-    delete_spots(lot_id)  # Delete all spots associated with the lot
+    delete_spots(lot_id)  # Delete all spots associated with the lot by function calling
     db.session.commit()
     return redirect(url_for("admin.manage_lots", lots=ParkingLot.query.all()))
 
@@ -158,7 +158,7 @@ def manage_users():
 STATIC_PATH = "static"  # My Flask static directory
 
 @admin_bp.route("/charts")
-def admin_chart():     #Making Charts for Admin Dashboard
+def admin_chart():  
     make_reservations_chart()
     make_spot_status_chart()
     make_revenue_chart()
