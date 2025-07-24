@@ -15,7 +15,6 @@ app = Flask(__name__)
 
 # Configure session settings
 app.secret_key= '19042004'  # Set a secret key for session management
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)  # Set session lifetime
 
 CORS(app)
 
@@ -38,7 +37,6 @@ def signin():
         if username == "admin" and password == "admin":
             session['username'] = 'admin'
             session['role'] = 'admin'
-            session.permanent = True  # Make session permanent
             return redirect(url_for('admin.admin_dashboard'))
 
         user = User.query.filter_by(username=username, password=password).first()
@@ -48,7 +46,6 @@ def signin():
 
         session['username'] = user.username
         session['role'] = 'user'
-        session.permanent = True  # Make session permanent
         return redirect(url_for('dashboard', username=user.username))
 
     return render_template('signin.html')
@@ -82,10 +79,6 @@ def signup():
 #------------------------------------------------------------#
 @app.route('/dashboard/<string:username>')
 def dashboard(username):
-    if 'username' not in session or session['username'] != username:
-        flash("Access denied. Please log in first.", "danger")
-        return redirect(url_for('signin'))
-    session.permanent = True  # Make session permanent
     return render_template("dashboard.html", username=username)
 
 #------------------------------------------------------------#
@@ -114,9 +107,8 @@ def profile(username):
 #------------------------------------------------------------#
 @app.route('/logout/')
 def logout():
-    session.clear()
-    flash("You have been logged out.", "info")
     return redirect(url_for('signin'))
+
 #------------------------------------------------------------#
 #------------------- Parking lots route --------------------#
 #------------------------------------------------------------#

@@ -11,9 +11,6 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 # ------------------------- Admin Dashboard Landing Page ----------------------------#
 @admin_bp.route("/dashboard")
 def admin_dashboard():
-    if 'user' not in session or session.get('role') != 'admin':
-        flash("Access denied. Please log in as admin.", "danger")
-        return redirect(url_for('signin'))
     return render_template("admin_dash.html")
 
 #----------------------------------------------------------------------------#
@@ -86,8 +83,9 @@ def edit_lot(lot_id):
 #------------------- Completely Delete the Parking Lot------------------#
 @admin_bp.route("/delete_lot/<int:lot_id>/", methods=["POST"])
 def delete_lot(lot_id):
+    delete_reservations(lot_id)
+    delete_spots(lot_id)
     ParkingLot.query.filter_by(id=lot_id).delete()
-    delete_spots(lot_id)  # Delete all spots associated with the lot by function calling
     db.session.commit()
     return redirect(url_for("admin.manage_lots", lots=ParkingLot.query.all()))
 
@@ -95,6 +93,14 @@ def delete_spots(lot_id):
     spots = ParkingSpot.query.filter_by(lot_id=lot_id).all()
     for spot in spots:
         db.session.delete(spot)
+    db.session.commit()
+
+def delete_reservations(lot_id):
+    spots = ParkingSpot.query.filter_by(lot_id=lot_id).all()
+    spot_ids = [spot.id for spot in spots]
+    reservations = Reservation.query.filter(Reservation.spot_id.in_(spot_ids)).all() 
+    for reservation in reservations:
+        db.session.delete(reservation)
     db.session.commit()
 
 #----------------------------------------------------------------------------#
