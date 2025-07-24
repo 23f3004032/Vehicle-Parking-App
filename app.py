@@ -9,9 +9,14 @@ import os
 from admin import admin_bp
 import random
 import google.generativeai as genai
+from datetime import timedelta
 
 app = Flask(__name__)
+
 app.secret_key= '19042004'  # Set a secret key for session management
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=2)
+app.permanent_session_lifetime = timedelta(hours=2)
+
 CORS(app)
 
 
@@ -34,6 +39,7 @@ def signin():
         if username == "admin" and password == "admin":
             session['user'] = 'admin'
             session['role'] = 'admin'
+            session.permanent = True  # Make session permanent
             return redirect(url_for('admin.admin_dashboard'))
 
         user = User.query.filter_by(username=username, password=password).first()
@@ -43,6 +49,7 @@ def signin():
 
         session['user'] = user.username
         session['role'] = 'user'
+        session.permanent = True  # Make session permanent
         return redirect(url_for('dashboard', username=user.username))
 
     return render_template('signin.html')
