@@ -41,12 +41,18 @@
                 Current Bookings
             </h4>
             <div class="row g-4">
-                {% set current_found = false %}
+                {% set current_bookings = [] %}
                 {% for lot in lots %}
                 {% for spot in spots %}
                 {% for reservation in reservations %}
                 {% if lot.id == spot.lot_id and spot.id == reservation.spot_id and not(reservation.leaving_timestamp) %}
-                {% set current_found = true %}
+                {% set _ = current_bookings.append((lot, reservation)) %}
+                {% endif %}
+                {% endfor %}
+                {% endfor %}
+                {% endfor %}
+                
+                {% for lot, reservation in current_bookings %}
                 <div class="col-lg-6">
                     <div class="card border-0 shadow-lg h-100">
                         <div class="card-header bg-success text-white">
@@ -91,12 +97,9 @@
                         </div>
                     </div>
                 </div>
-                {% endif %}
-                {% endfor %}
-                {% endfor %}
                 {% endfor %}
                 
-                {% if not current_found %}
+                {% if current_bookings|length == 0 %}
                 <div class="col-12">
                     <div class="text-center py-5">
                         <i class="bi bi-car-front text-muted" style="font-size: 4rem;"></i>

@@ -13,12 +13,11 @@ from datetime import timedelta
 
 app = Flask(__name__)
 
+# Configure session settings
 app.secret_key= '19042004'  # Set a secret key for session management
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=2)
-app.permanent_session_lifetime = timedelta(hours=2)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=24)  # Set session lifetime
 
 CORS(app)
-
 
 # Configurations
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///parking.db'
@@ -37,7 +36,7 @@ def signin():
         password = request.form.get('password')
 
         if username == "admin" and password == "admin":
-            session['user'] = 'admin'
+            session['username'] = 'admin'
             session['role'] = 'admin'
             session.permanent = True  # Make session permanent
             return redirect(url_for('admin.admin_dashboard'))
@@ -47,7 +46,7 @@ def signin():
             flash("Invalid credentials, please try again.", "danger")
             return redirect(url_for('signin'))
 
-        session['user'] = user.username
+        session['username'] = user.username
         session['role'] = 'user'
         session.permanent = True  # Make session permanent
         return redirect(url_for('dashboard', username=user.username))
@@ -83,9 +82,10 @@ def signup():
 #------------------------------------------------------------#
 @app.route('/dashboard/<string:username>')
 def dashboard(username):
-    if 'user' not in session or session['user'] != username:
+    if 'username' not in session or session['username'] != username:
         flash("Access denied. Please log in first.", "danger")
         return redirect(url_for('signin'))
+    session.permanent = True  # Make session permanent
     return render_template("dashboard.html", username=username)
 
 #------------------------------------------------------------#
@@ -265,5 +265,5 @@ if __name__ == '__main__':
             admin_cred = User(username="admin", password="admin")
             db.session.add(admin_cred)
             db.session.commit()
-    app.run(debug=True, port=1904)  # Run the Flask app
+    app.run(debug=True)  # Run the Flask app
 
